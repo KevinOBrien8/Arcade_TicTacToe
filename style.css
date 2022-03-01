@@ -1,43 +1,45 @@
-*{
-    box-sizing: border-box;
+* {
+  box-sizing: border-box;
 }
 
-html{
-    padding: 0;
-    margin: 0;
-    width: 100vw;
-    height: auto;
-    /* put in font family here when the time comes */
+html {
+  padding: 0;
+  margin: 0;
+  width: 100vw;
+  height: auto;
+  /* put in font family here when the time comes */
 }
 
-body{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    margin: 0;
-    width: 100%;
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0;
+  width: 100%;
 }
 
 body > * {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 1rem;
 }
 h1 {
-    width: 100%;
-    text-align: center;
+  width: 100%;
+  text-align: center;
 }
 
 #board {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    width: 400px;
-    /* may need to adjust these 2 */
-    height: 400px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: 400px;
+  /* may need to adjust these 2 */
+  height: 400px;
+}
+#board > cell {
 }

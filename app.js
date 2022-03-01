@@ -27,7 +27,6 @@
 // to see if there is a game winner
 let gameActive = true;
 // to check the current player (whos turn)
-let currentPlayer = "O";
 
 /////////////////
 /* BOARD SETUP */
@@ -50,38 +49,40 @@ const initialState = {
   winner: null,
   player1: "",
   player2: "Computer",
+  numMoves: 0,
 };
+let state = { ...initialState };
 
 const player1 = document.getElementsByName("player1")[0];
 player1.addEventListener("change", (e) => {
   const node = e.target;
-  initialState.player1 = node.value;
+  state.player1 = node.value;
 });
 const player2 = document.getElementsByName("player2")[0];
 player2.addEventListener("change", (e) => {
   const node = e.target;
-  initialState.player2 = node.value;
+  state.player2 = node.value;
 });
 
 const registerPlayersButton = document.getElementById("registerPlayers");
 registerPlayersButton.addEventListener("click", (e) => {
-  console.log(initialState);
+  console.log(state);
 });
 
 // for game mechanics
 // easiest way to figure out turns in a game that trades turns
 // is to keep a global variable to track number of moves
-let numMoves = 0;
+// let numMoves = 0;
 
 // on each move, increment numMoves -> numMoves++
 // before incrementing, check whose move by calling something like
 // const currentPlayerMove = numMoves % 2 === 0 ? initialState.player1 : initialState.player2
 // log out whose turn it is on successive clicks to check that this works
 function trackMoves() {
-  const currentPlayerMove =
-    numMoves % 2 === 0 ? initialState.player1 : initialState.player2;
-  numMoves++;
-  console.log({ currentPlayerMove, numMoves });
+  const move = state.numMoves % 2 === 0 ? "X" : "O";
+  const playerName = state.numMoves % 2 === 0 ? state.player1 : state.player2;
+  state.numMoves++;
+  console.log({ playerName, move, numMoves: state.numMoves });
 }
 
 const testTrackMovesBtn = document.getElementById("testTrackMoves");
@@ -97,6 +98,25 @@ testTrackMovesBtn.addEventListener("click", trackMoves);
 //////////////////////
 /* BUILD GAME BOARD */
 //////////////////////
+
+function buildDOMBoard() {
+  const DOMBoard = document.getElementById("board");
+  const { board } = state;
+  let nodeId = 1;
+
+  for (let i = 0; i < board.length; i++) {
+    for (let j = 0; j < board[0].length; j++) {
+      const cellId = board[i][j];
+      const cell = document.createElement("div");
+      cell.id = `cell:${nodeId}`;
+      cell.className = "cell";
+      cell.dataset.cellId = nodeId;
+      DOMBoard.appendChild(cell);
+      nodeId++;
+    }
+  }
+}
+buildDOMBoard();
 // live-server injected its markup and it's being rendered into page
 // this masks that script injection
 document.body.querySelector("script").style.display = "none";
