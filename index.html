@@ -1,20 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    
+  <head>
     <title>Arcade | Tic-Tac-Toe</title>
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./style.css" />
     <script defer src="./app.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <h1>Tic-Tac-Toe</h1>
+      <h1>Tic-Tac-Toe</h1>
     </header>
     <main>
-        <div id="board"></div> 
-        <h2 id="gameStatus" ></h2>
-        <button id="gameRestart">Restart Game</button>
+      <section id="players">
+        <div>
+          <label for="player1">Player 1</label>
+          <input type="text" name="player1" />
+        </div>
+        <div>
+          <label for="player2">Player 2</label>
+          <input type="text" name="player2" />
+        </div>
+        <button id="registerPlayers">Register Players</button>
+        <button id="testTrackMoves">Test Track Moves Fn</button>
+      </section>
+      <div id="board"></div>
+      <h2 id="gameStatus"></h2>
+      <button id="gameRestart">Restart Game</button>
     </main>
-    
-</body>
+  </body>
 </html>
