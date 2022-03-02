@@ -126,6 +126,7 @@ document.getElementById("board").addEventListener("click", (e) => {
 
   handleMove(e.target);
   renderState();
+  checkWin();
 });
 
 // need to determine whos move it is and then stick that cell into their cell
@@ -166,23 +167,108 @@ function renderState() {
 }
 
 function checkWin() {
-  // helper functions to generate rows, cols, and diagonals
-  // store them in object like this:
-  /* 
-      function getRows(){
-          return { row1, row2, row3 }
-      } 
-  
-      validate by checking rows = getRows()
+  const board = state.board;
+  const numMoves = state.numMoves;
+  const playerName = state.numMoves % 2 === 0 ? state.player2 : state.player1;
 
-      for (const key in row){
-          const array = row[key]
-          // check win here with array.every()
+  if (numMoves === 9) {
+    gameStatus.innerHTML = "Game Over! It's a draw";
+    return;
+  }
+  function getRows(board) {
+    let rows = {
+      row1: [board[0], board[1], board[2]],
+      row2: [board[3], board[4], board[5]],
+      row3: [board[6], board[7], board[8]],
+    };
+    return rows;
+  }
+
+  function getCols(board) {
+    let cols = {
+      col1: [board[0], board[3], board[6]],
+      col2: [board[1], board[4], board[7]],
+      col3: [board[2], board[5], board[8]],
+    };
+    return cols;
+  }
+
+  function getDiags(board) {
+    let diagonals = {
+      diag1: [board[0], board[4], board[8]],
+      diag2: [board[3], board[4], board[6]],
+    };
+    return diagonals;
+  }
+  //   validate by checking rows = getRows()
+
+  //       for (const key in row){
+  //           const array = row[key]
+  //           // check win here with array.every()
+  //       }
+  let rows = getRows(board);
+  for (const key in rows) {
+    const array = rows[key];
+    let isRowWinX = array.every(function (elem) {
+      return elem === "X";
+    });
+    if (isRowWinX) {
+      gameStatus.innerHTML = `${playerName} wins!`;
+      return;
+    }
+    let isRowWinO = array.every(function (elem) {
+      return elem === "O";
+    });
+    if (isRowWinO) {
+      gameStatus.innerHTML = `${playerName} wins!`;
+      return;
+    }
+  }
+
+  let cols = getCols(board);
+
+  for (const key in cols) {
+    const array = cols[key];
+    let isColWinX = array.every(function (elem) {
+      return elem === "X";
+    });
+    if (isColWinX) {
+      gameStatus.innerHTML = `${playerName} wins!`;
+      return;
+    }
+    let isColWinO = array.every(function (elem) {
+      return elem === "O";
+    });
+    if (isColWinO) {
+      gameStatus.innerHTML = `${playerName} wins!`;
+      return;
+    }
+
+    let diags = getDiags(board);
+
+    for (const key in diags) {
+      const array = diags[key];
+      let isDiagWinX = array.every(function (elem) {
+        return elem === "X";
+      });
+      if (isDiagWinX) {
+        gameStatus.innerHTML = `${playerName} wins!`;
+        return;
       }
+      let isDiagWinO = array.every(function (elem) {
+        return elem === "O";
+      });
+      if (isDiagWinO) {
+        gameStatus.innerHTML = `${playerName} wins!`;
+        return;
+      }
+    }
+  }
 
-      ... do the same thing for cols and diagonals
-  */
+  //   let cols = getCols(board);
+  //   console.log(cols);
 }
+
 // live-server injected its markup and it's being rendered into page
 // this masks that script injection
 document.body.querySelector("script").style.display = "none";
