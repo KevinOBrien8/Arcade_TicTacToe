@@ -32,32 +32,35 @@ let gameActive = true;
 /* BOARD SETUP */
 /////////////////
 function createEmptyBoard() {
-  const board = [];
-  for (let i = 0; i < 3; i++) {
-    board.push(new Array(3).fill(null));
-  }
-  return board;
+  return new Array(9).fill("");
 }
 
 ///////////
 /* STATE */
 ///////////
 
-const initialState = {
-  board: createEmptyBoard(),
-  winner: null,
-  player1: "",
-  player2: "",
-  numMoves: 0,
-};
-let state = { ...initialState };
+function createInitialState() {
+  const initialState = {
+    board: createEmptyBoard(),
+    winner: null,
+    player1: "",
+    player2: "",
+    numMoves: 0,
+  };
+  return initialState;
+}
+
+let state = createInitialState();
 
 // this section still needs work
 const restartBtn = document.getElementById("gameRestart");
-function restartGame() {
-  state = { ...initialState };
-}
+
 restartBtn.addEventListener("click", restartGame);
+
+function restartGame() {
+  state = createInitialState();
+}
+
 // fix the section above here
 
 // do I still need this section below
@@ -78,27 +81,16 @@ const gameStatus = document.getElementById("gameStatus");
 const registerPlayersButton = document.getElementById("registerPlayers");
 registerPlayersButton.addEventListener("click", (e) => {
   gameStatus.innerHTML = `It's ${state.player1}'s turn!`;
-  console.log(state);
 });
-
-// for game mechanics
-// easiest way to figure out turns in a game that trades turns
-// is to keep a global variable to track number of moves
-// let numMoves = 0;
 
 // on each move, increment numMoves -> numMoves++
 // before incrementing, check whose move by calling something like
 // const currentPlayerMove = numMoves % 2 === 0 ? initialState.player1 : initialState.player2
 // log out whose turn it is on successive clicks to check that this works
-function trackMoves() {
-  const move = state.numMoves % 2 === 0 ? "X" : "O";
-  const playerName = state.numMoves % 2 === 0 ? state.player1 : state.player2;
-  state.numMoves++;
-  console.log({ playerName, move, numMoves: state.numMoves });
-}
+// function trackMoves() {}
 
-const testTrackMovesBtn = document.getElementById("testTrackMoves");
-testTrackMovesBtn.addEventListener("click", trackMoves);
+// const testTrackMovesBtn = document.getElementById("testTrackMoves");
+// testTrackMovesBtn.addEventListener("click", trackMoves);
 
 // once we reach a certain number of moves
 // if someone hasn't won yet, it's a stalemate
@@ -114,21 +106,83 @@ testTrackMovesBtn.addEventListener("click", trackMoves);
 function buildDOMBoard() {
   const DOMBoard = document.getElementById("board");
   const { board } = state;
-  let nodeId = 1;
 
   for (let i = 0; i < board.length; i++) {
-    for (let j = 0; j < board[0].length; j++) {
-      const cellId = board[i][j];
-      const cell = document.createElement("div");
-      cell.id = `cell:${nodeId}`;
-      cell.className = "cell";
-      cell.dataset.cellId = nodeId;
-      DOMBoard.appendChild(cell);
-      nodeId++;
-    }
+    const cell = document.createElement("div");
+    cell.id = `cell:${i}`;
+    cell.className = "cell";
+    cell.dataset.cellId = i;
+    DOMBoard.appendChild(cell);
   }
 }
 buildDOMBoard();
+
+////////////////////
+/* GAME MECHANICS */
+////////////////////
+
+document.getElementById("board").addEventListener("click", (e) => {
+  if (e.target.className !== "cell") return;
+
+  handleMove(e.target);
+  renderState();
+});
+
+// need to determine whos move it is and then stick that cell into their cell
+function handleMove(node) {
+  // take the dataset ID property use this to find the position in the state grid put move there X if X or O ifO
+
+  // your node has a dataset.id property equal to a stringified version
+  // of the number 0 through 8
+  // nice thing is, those numbers map EXACTLY to positions in our state grid
+  // so, updating the state with the current move
+  // means, state.board[node.dataset.id] = move
+
+  const nodeId = node.dataset.cellId;
+  const move = state.numMoves % 2 === 0 ? "X" : "O";
+  if (state.board[nodeId]) {
+    return;
+  }
+  state.board[nodeId] = move;
+  state.numMoves++;
+
+  const playerName = state.numMoves % 2 === 0 ? state.player1 : state.player2;
+  gameStatus.innerHTML = `It's ${playerName}'s turn!`;
+  console.log({ playerName, move, numMoves: state.numMoves });
+}
+
+function renderState() {
+  const boardSquares = document.querySelectorAll(".cell");
+
+  for (let i = 0; i < state.board.length; i++) {
+    // write every move (or lack of move)
+    // to each dom node
+    // where a dom node is held in a "list"
+    // you can grab with document.querySelectorAll('.cell')
+    // where the "move" is the actual value
+    // "X" or "O", at that position of the state.board array
+    boardSquares[i].innerHTML = `${state.board[i]}`;
+  }
+}
+
+function checkWin() {
+  // helper functions to generate rows, cols, and diagonals
+  // store them in object like this:
+  /* 
+      function getRows(){
+          return { row1, row2, row3 }
+      } 
+  
+      validate by checking rows = getRows()
+
+      for (const key in row){
+          const array = row[key]
+          // check win here with array.every()
+      }
+
+      ... do the same thing for cols and diagonals
+  */
+}
 // live-server injected its markup and it's being rendered into page
 // this masks that script injection
 document.body.querySelector("script").style.display = "none";
