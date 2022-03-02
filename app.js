@@ -38,7 +38,6 @@ function createEmptyBoard() {
   }
   return board;
 }
-console.log(createEmptyBoard());
 
 ///////////
 /* STATE */
@@ -48,11 +47,20 @@ const initialState = {
   board: createEmptyBoard(),
   winner: null,
   player1: "",
-  player2: "Computer",
+  player2: "",
   numMoves: 0,
 };
 let state = { ...initialState };
 
+// this section still needs work
+const restartBtn = document.getElementById("gameRestart");
+function restartGame() {
+  state = { ...initialState };
+}
+restartBtn.addEventListener("click", restartGame);
+// fix the section above here
+
+// do I still need this section below
 const player1 = document.getElementsByName("player1")[0];
 player1.addEventListener("change", (e) => {
   const node = e.target;
@@ -63,9 +71,13 @@ player2.addEventListener("change", (e) => {
   const node = e.target;
   state.player2 = node.value;
 });
+// down to this line
+
+const gameStatus = document.getElementById("gameStatus");
 
 const registerPlayersButton = document.getElementById("registerPlayers");
 registerPlayersButton.addEventListener("click", (e) => {
+  gameStatus.innerHTML = `It's ${state.player1}'s turn!`;
   console.log(state);
 });
 
