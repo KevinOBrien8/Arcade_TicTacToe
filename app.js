@@ -46,6 +46,7 @@ function createInitialState() {
     player1: "",
     player2: "",
     numMoves: 0,
+    isPlaying: false,
   };
   return initialState;
 }
@@ -59,6 +60,13 @@ restartBtn.addEventListener("click", restartGame);
 
 function restartGame() {
   state = createInitialState();
+  renderState();
+  const player1 = document.getElementsByName("player1")[0];
+  const player2 = document.getElementsByName("player2")[0];
+  const gameStatus = document.getElementById("gameStatus");
+  player1.value = "";
+  player2.value = "";
+  gameStatus.innerHTML = "";
 }
 
 // fix the section above here
@@ -80,24 +88,9 @@ const gameStatus = document.getElementById("gameStatus");
 
 const registerPlayersButton = document.getElementById("registerPlayers");
 registerPlayersButton.addEventListener("click", (e) => {
+  state.isPlaying = true;
   gameStatus.innerHTML = `It's ${state.player1}'s turn!`;
 });
-
-// on each move, increment numMoves -> numMoves++
-// before incrementing, check whose move by calling something like
-// const currentPlayerMove = numMoves % 2 === 0 ? initialState.player1 : initialState.player2
-// log out whose turn it is on successive clicks to check that this works
-// function trackMoves() {}
-
-// const testTrackMovesBtn = document.getElementById("testTrackMoves");
-// testTrackMovesBtn.addEventListener("click", trackMoves);
-
-// once we reach a certain number of moves
-// if someone hasn't won yet, it's a stalemate
-// ... what is that number? :)
-
-// create a button and attach trackMoves as the callback function
-// and test it!
 
 //////////////////////
 /* BUILD GAME BOARD */
@@ -120,27 +113,20 @@ buildDOMBoard();
 ////////////////////
 /* GAME MECHANICS */
 ////////////////////
-
-document.getElementById("board").addEventListener("click", (e) => {
+const clickHandler = (e) => {
+  if (!state.isPlaying) return;
   if (e.target.className !== "cell") return;
 
   handleMove(e.target);
   renderState();
   checkWin();
-});
+};
+document.getElementById("board").addEventListener("click", clickHandler);
 
-// need to determine whos move it is and then stick that cell into their cell
 function handleMove(node) {
-  // take the dataset ID property use this to find the position in the state grid put move there X if X or O ifO
-
-  // your node has a dataset.id property equal to a stringified version
-  // of the number 0 through 8
-  // nice thing is, those numbers map EXACTLY to positions in our state grid
-  // so, updating the state with the current move
-  // means, state.board[node.dataset.id] = move
-
   const nodeId = node.dataset.cellId;
   const move = state.numMoves % 2 === 0 ? "X" : "O";
+
   if (state.board[nodeId]) {
     return;
   }
@@ -156,12 +142,6 @@ function renderState() {
   const boardSquares = document.querySelectorAll(".cell");
 
   for (let i = 0; i < state.board.length; i++) {
-    // write every move (or lack of move)
-    // to each dom node
-    // where a dom node is held in a "list"
-    // you can grab with document.querySelectorAll('.cell')
-    // where the "move" is the actual value
-    // "X" or "O", at that position of the state.board array
     boardSquares[i].innerHTML = `${state.board[i]}`;
   }
 }
@@ -173,6 +153,7 @@ function checkWin() {
 
   if (numMoves === 9) {
     gameStatus.innerHTML = "Game Over! It's a draw";
+    state.isPlaying = false;
     return;
   }
   function getRows(board) {
@@ -200,13 +181,9 @@ function checkWin() {
     };
     return diagonals;
   }
-  //   validate by checking rows = getRows()
 
-  //       for (const key in row){
-  //           const array = row[key]
-  //           // check win here with array.every()
-  //       }
   let rows = getRows(board);
+
   for (const key in rows) {
     const array = rows[key];
     let isRowWinX = array.every(function (elem) {
@@ -214,6 +191,7 @@ function checkWin() {
     });
     if (isRowWinX) {
       gameStatus.innerHTML = `${playerName} wins!`;
+      state.isPlaying = false;
       return;
     }
     let isRowWinO = array.every(function (elem) {
@@ -221,6 +199,7 @@ function checkWin() {
     });
     if (isRowWinO) {
       gameStatus.innerHTML = `${playerName} wins!`;
+      state.isPlaying = false;
       return;
     }
   }
@@ -234,6 +213,7 @@ function checkWin() {
     });
     if (isColWinX) {
       gameStatus.innerHTML = `${playerName} wins!`;
+      state.isPlaying = false;
       return;
     }
     let isColWinO = array.every(function (elem) {
@@ -241,6 +221,7 @@ function checkWin() {
     });
     if (isColWinO) {
       gameStatus.innerHTML = `${playerName} wins!`;
+      state.isPlaying = false;
       return;
     }
 
@@ -253,6 +234,7 @@ function checkWin() {
       });
       if (isDiagWinX) {
         gameStatus.innerHTML = `${playerName} wins!`;
+        state.isPlaying = false;
         return;
       }
       let isDiagWinO = array.every(function (elem) {
@@ -260,6 +242,7 @@ function checkWin() {
       });
       if (isDiagWinO) {
         gameStatus.innerHTML = `${playerName} wins!`;
+        state.isPlaying = false;
         return;
       }
     }
